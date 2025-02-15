@@ -14,8 +14,6 @@ export const recursivelyGetAllLocations = async (blocks: BlockEntity[]) => {
         locationArr = locationArr.concat(result)
       } else if (block.properties?.coords) {
         locationArr.push(block)
-      } else {
-        continue
       }
 
       if (block.children) {

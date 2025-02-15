@@ -10,12 +10,24 @@ export interface LocationProps {
   'marker-color': string
 }
 
+const extractLatLong = (url: string): LatLngTuple => {
+  const pattern = /@(-?\d+\.\d+),(-?\d+\.\d+)|!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/
+  const match = url.match(pattern)
+  if (!match) return [0, 0]
+  if (!match[1] && !match[2] && !match[3] && !match[4]) return [0, 0]
+
+  if (match) {
+    const lat = parseFloat(match[1]! || match[3]!)
+    const lon = parseFloat(match[2]! || match[4]!)
+
+    return [lat, lon]
+  }
+  return [0, 0]
+}
+
 const handleCoords = (str: string): LatLngTuple => {
   if (str.startsWith('https://www.google.com/maps')) {
-    const lat = str.split('@')[1]!.split(',')[0]
-    const lng = str.split('@')[1]!.split(',')[1]!.split(',')[0]
-    if (!lat || !lng) return [0, 0]
-    return [parseFloat(lat), parseFloat(lng)]
+    return extractLatLong(str)
   } else {
     const strArr = str.split(',')
     if (strArr.length !== 2) return [0, 0]
